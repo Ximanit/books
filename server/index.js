@@ -17,6 +17,7 @@ app.use(express.json());
 // Импорт маршрутов
 const userRoutes = require('./routes/userRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const bookRoutes = require('./routes/bookRoutes');
 
 // Использование маршрутов
 app.use('/api/users', userRoutes);
@@ -25,10 +26,10 @@ app.use('/api/books', bookRoutes);
 
 // Тестовый маршрут
 app.get('/', (req, res) => {
-	res.send('✅ API Книжный червь работает!');
+	res.send('API Книжный червь работает!');
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 app.listen(PORT, () => {
-	console.log(`🚀 Сервер запущен на порту ${PORT}`);
+	console.log(`Сервер запущен на порту ${PORT}`);
 });

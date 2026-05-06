@@ -43,17 +43,29 @@
 <script setup>
 	import { ref } from 'vue';
 	import { useRouter } from 'vue-router';
+	import { useAuthStore } from '@/stores/auth';
+	import axios from 'axios';
 
 	const router = useRouter();
+	const auth = useAuthStore();
 
-	const form = ref({
-		email: '',
-		password: '',
-	});
+	const form = ref({ email: '', password: '' });
+	const loading = ref(false);
 
-	const login = () => {
-		// Здесь будет реальная авторизация
-		alert('Успешный вход!');
-		router.push('/');
+	const login = async () => {
+		loading.value = true;
+		try {
+			const res = await axios.post('/api/users/login', form.value);
+
+			if (res.data.success) {
+				auth.setAuth(res.data.user, res.data.token);
+				alert('Успешный вход!');
+				router.push('/');
+			}
+		} catch (error) {
+			alert(error.response?.data?.message || 'Ошибка входа');
+		} finally {
+			loading.value = false;
+		}
 	};
 </script>

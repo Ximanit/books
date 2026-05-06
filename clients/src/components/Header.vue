@@ -22,11 +22,11 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
-	const isLoggedIn = ref(true); // потом заменишь на Pinia / Vuex
-	const userName = ref('Александра');
-</script>
+	import { useAuthStore } from '@/stores/auth';
+	import { computed } from 'vue';
 
-<style scoped>
-	/* можно вынести общие стили в main.css */
-</style>
+	const auth = useAuthStore();
+
+	const userName = computed(() => auth.user?.name || 'Гость');
+	const isLoggedIn = computed(() => auth.isLoggedIn);
+</script>

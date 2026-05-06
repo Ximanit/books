@@ -53,17 +53,21 @@
 <script setup>
 	import { ref } from 'vue';
 	import { useRouter } from 'vue-router';
+	import axios from 'axios';
 
 	const router = useRouter();
+	const form = ref({ name: '', email: '', password: '' });
 
-	const form = ref({
-		name: '',
-		email: '',
-		password: '',
-	});
+	const register = async () => {
+		try {
+			const res = await axios.post('/api/users/register', form.value);
 
-	const register = () => {
-		alert('Регистрация прошла успешно!');
-		router.push('/login');
+			if (res.data.success) {
+				alert('Регистрация прошла успешно! Теперь войдите в аккаунт.');
+				router.push('/login');
+			}
+		} catch (error) {
+			alert(error.response?.data?.message || 'Ошибка регистрации');
+		}
 	};
 </script>

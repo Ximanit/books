@@ -4,7 +4,15 @@
 			<div class="avatar"></div>
 			<div class="review-meta">
 				<strong>{{ author }}</strong>
-				<time :datetime="date">{{ formattedDate }}</time>
+				<time :datetime="date">
+					{{
+						new Date(date).toLocaleDateString('ru-RU', {
+							day: 'numeric',
+							month: 'long',
+							year: 'numeric',
+						})
+					}}
+				</time>
 			</div>
 		</div>
 
@@ -14,7 +22,7 @@
 
 		<div class="review-content">
 			<h3>{{ title }}</h3>
-			<RatingStars :rating="rating" />
+			<RatingStars />
 			<p>{{ text }}</p>
 		</div>
 	</article>
@@ -31,10 +39,4 @@
 		cover: String,
 		rating: { type: Number, default: 5 },
 	});
-
-	const formattedDate = new Intl.DateTimeFormat('ru-RU', {
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric',
-	}).format(new Date());
 </script>

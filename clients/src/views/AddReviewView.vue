@@ -16,7 +16,7 @@
 
 				<div class="input-group">
 					<label>Ваша оценка</label>
-					<RatingStars />
+					<RatingSelector v-model="form.rating" />
 				</div>
 
 				<div class="input-group">
@@ -48,11 +48,11 @@
 </template>
 
 <script setup>
-	import RatingStars from '@/components/RatingStars.vue';
 	import { ref } from 'vue';
 	import { useRouter } from 'vue-router';
 	import axios from 'axios';
 	import { useAuthStore } from '@/stores/auth';
+	import RatingSelector from '@/components/RatingSelector.vue';
 
 	const router = useRouter();
 	const auth = useAuthStore();
@@ -80,12 +80,14 @@
 		loading.value = true;
 
 		try {
-			// Пока отправляем как есть (можно потом улучшить с отдельной книгой)
-			const res = await axios.post('/api/reviews', {
-				bookTitle: form.value.title, // временно
+			const reviewData = {
+				bookTitle: form.value.title,
 				rating: form.value.rating,
 				text: form.value.text,
-			});
+				user: auth.user?.id, // можно отправить, но лучше на бэкенде
+			};
+
+			const res = await axios.post('/api/reviews', reviewData);
 
 			if (res.data.success) {
 				alert('Отзыв успешно опубликован!');

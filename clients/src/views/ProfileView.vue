@@ -3,8 +3,10 @@
 		<!-- Профиль пользователя -->
 		<section class="profile-header">
 			<div class="profile-avatar"></div>
-			<h1 class="profile-name">{{ user?.name || 'Загрузка...' }}</h1>
-			<div class="profile-email">{{ user?.email }}</div>
+			<h1 class="profile-name">
+				{{ user?.name || 'Загрузка...' }}
+			</h1>
+			<div class="profile-email">{{ user?.email || '' }}</div>
 			<div class="profile-joined">Присоединился {{ joinedDate }}</div>
 
 			<div style="margin-top: 1.8rem">
@@ -33,11 +35,11 @@
 				<ReviewCard
 					v-for="review in reviews"
 					:key="review._id"
-					:author="user?.name"
+					:author="user?.name || 'Аноним'"
 					:date="review.createdAt"
-					:title="review.book?.title || review.bookTitle || 'Без названия'"
+					:title="review.bookTitle || review.book?.title || 'Без названия'"
 					:text="review.text"
-					:cover="review.book?.coverImage || 'images.jfif'"
+					:cover="review.coverImage || 'images.jfif'"
 					:rating="review.rating" />
 
 				<div v-if="reviews.length === 0" class="empty">
@@ -49,7 +51,7 @@
 </template>
 
 <script setup>
-	import { ref, onMounted, computed } from 'vue';
+	import { ref, onMounted, computed, watch } from 'vue';
 	import ReviewCard from '@/components/ReviewCard.vue';
 	import { useAuthStore } from '@/stores/auth';
 	import axios from 'axios';
@@ -62,10 +64,14 @@
 	const loading = ref(true);
 	const error = ref(null);
 
+	// Реактивно следим за пользователем из хранилища
+	const user = computed(() => auth.user);
+
 	// Вычисляем дату регистрации
 	const joinedDate = computed(() => {
-		if (!auth.user?.createdAt) return 'Недавно';
-		return new Date(auth.user.createdAt).toLocaleDateString('ru-RU', {
+		if (!user.value?.createdAt && !user.value?.joinedAt) return 'Недавно';
+		const date = new Date(user.value.createdAt || user.value.joinedAt);
+		return date.toLocaleDateString('ru-RU', {
 			year: 'numeric',
 			month: 'long',
 		});
@@ -81,7 +87,7 @@
 		error.value = null;
 
 		try {
-			const res = await axios.get('/api/reviews/');
+			const res = await axios.get('/api/reviews'); // ← важно использовать /my
 			reviews.value = res.data.data || res.data;
 		} catch (err) {
 			console.error(err);
@@ -103,18 +109,12 @@
 	onMounted(() => {
 		fetchMyReviews();
 	});
+
+	// Дополнительно: если пользователь залогинился позже — обновляем
+	watch(
+		() => auth.isLoggedIn,
+		(loggedIn) => {
+			if (loggedIn) fetchMyReviews();
+		},
+	);
 </script>
-
-<style scoped>
-	.loading,
-	.error,
-	.empty {
-		text-align: center;
-		padding: 3rem 1rem;
-		color: var(--text3);
-	}
-
-	.error button {
-		margin-top: 1rem;
-	}
-</style>

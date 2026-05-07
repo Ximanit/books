@@ -13,9 +13,9 @@
 				:key="review._id"
 				:author="review.user?.name || 'Аноним'"
 				:date="review.createdAt"
-				:title="review.book?.title || review.bookTitle"
+				:title="review.title || review.book?.title"
 				:text="review.text"
-				:cover="review.book?.coverImage || review.coverImage || 'images.jfif'"
+				:cover="review.coverImage || 'images.jfif'"
 				:rating="review.rating" />
 
 			<div v-if="reviews.length === 0" class="empty">

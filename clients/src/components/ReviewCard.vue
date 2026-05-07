@@ -5,13 +5,7 @@
 			<div class="review-meta">
 				<strong>{{ author }}</strong>
 				<time :datetime="date">
-					{{
-						new Date(date).toLocaleDateString('ru-RU', {
-							day: 'numeric',
-							month: 'long',
-							year: 'numeric',
-						})
-					}}
+					{{ formatDate(date) }}
 				</time>
 			</div>
 		</div>
@@ -21,22 +15,41 @@
 		</div>
 
 		<div class="review-content">
-			<h3>{{ title }}</h3>
-			<RatingStars />
+			<h3>{{ title || 'Без названия' }}</h3>
+
+			<!-- Новый динамический рейтинг -->
+			<ReviewRating :rating="rating" />
+
 			<p>{{ text }}</p>
 		</div>
 	</article>
 </template>
 
 <script setup>
-	import RatingStars from './RatingStars.vue';
+	import ReviewRating from './ReviewRating.vue';
+	import { defineProps } from 'vue';
 
-	defineProps({
+	const props = defineProps({
 		author: String,
-		date: String,
+		date: [String, Date],
 		title: String,
 		text: String,
 		cover: String,
-		rating: { type: Number, default: 5 },
+		rating: {
+			type: Number,
+			default: 5,
+		},
 	});
+
+	const formatDate = (dateValue) => {
+		if (!dateValue) return 'Дата неизвестна';
+		const date = new Date(dateValue);
+		if (isNaN(date.getTime())) return 'Дата неизвестна';
+
+		return date.toLocaleDateString('ru-RU', {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+		});
+	};
 </script>

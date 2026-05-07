@@ -6,7 +6,7 @@
 
 				<nav class="nav-links">
 					<router-link to="/">Лента</router-link>
-					<router-link to="/add">Добавить книгу</router-link>
+					<router-link to="/add">Добавить отзыв</router-link>
 					<router-link to="/profile">Профиль</router-link>
 				</nav>
 

@@ -6,17 +6,17 @@ exports.createReview = async (req, res) => {
 	try {
 		const { bookId, rating, text } = req.body;
 
-		if (!bookId || !rating || !text) {
-			return res
-				.status(400)
-				.json({
-					success: false,
-					message: 'Поля bookId, rating и text обязательны',
-				});
-		}
+		// if (!bookId || !rating || !text) {
+		// 	return res
+		// 		.status(400)
+		// 		.json({
+		// 			success: false,
+		// 			message: 'Поля bookId, rating и text обязательны',
+		// 		});
+		// }
 
 		const review = await Review.create({
-			user: req.user.id,
+			// user: req.user.id,
 			book: bookId,
 			rating: Number(rating),
 			text,
@@ -30,10 +30,10 @@ exports.createReview = async (req, res) => {
 				).toFixed(1)
 			: 0;
 
-		await Book.findByIdAndUpdate(bookId, {
-			averageRating: avgRating,
-			reviewCount: reviews.length,
-		});
+		// await Book.findByIdAndUpdate(bookId, {
+		// 	averageRating: avgRating,
+		// 	reviewCount: reviews.length,
+		// });
 
 		res.status(201).json({ success: true, data: review });
 	} catch (error) {

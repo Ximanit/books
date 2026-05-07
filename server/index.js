@@ -13,7 +13,7 @@ const app = express();
 // Middleware
 app.use(
 	cors({
-		origin: 'http://localhost:3000', // точный адрес фронтенда
+		origin: 'https://books-one-roan.vercel.app/', // точный адрес фронтенда
 		credentials: true, // важно для cookies / Authorization
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],

@@ -1,29 +1,41 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+const pool = require('./config/db'); // ← PostgreSQL
 
 dotenv.config();
-
-// Подключение к базе
-connectDB();
 
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(
+	cors({
+		origin: 'https://books-one-roan.vercel.app',
+		credentials: true,
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Authorization'],
+	}),
+);
 
-// Импорт маршрутов
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Маршруты
 const userRoutes = require('./routes/userRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const bookRoutes = require('./routes/bookRoutes');
+const groupRoutes = require('./routes/groupRoutes');
 
-// Использование маршрутов
 app.use('/api/users', userRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/books', bookRoutes);
+app.use('/api/groups', groupRoutes);
+
+app.get('/', (req, res) => {
+	res.send('API Книжный червь (PostgreSQL) работает!');
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-	console.log(`Сервер запущен на порту ${PORT}`);
+	console.log(`🚀 Сервер запущен на порту ${PORT}`);
 });

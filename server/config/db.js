@@ -1,13 +1,20 @@
-const mongoose = require('mongoose');
+const { Pool } = require('pg');
+require('dotenv').config();
 
-const connectDB = async () => {
-	try {
-		await mongoose.connect(process.env.MONGO_URI);
-		console.log('✅ MongoDB подключен');
-	} catch (error) {
-		console.error('❌ Ошибка подключения к MongoDB:', error.message);
-		process.exit(1);
-	}
-};
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL,
+	ssl:
+		process.env.NODE_ENV === 'production'
+			? { rejectUnauthorized: false }
+			: false,
+});
 
-module.exports = connectDB;
+pool.on('connect', () => {
+	console.log('✅ PostgreSQL подключен');
+});
+
+pool.on('error', (err) => {
+	console.error('❌ Ошибка PostgreSQL:', err.message);
+});
+
+module.exports = pool;

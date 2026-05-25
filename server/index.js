@@ -23,12 +23,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/books', bookRoutes);
 
-// Тестовый маршрут
-app.get('/', (req, res) => {
-	res.send('✅ API Книжный червь работает!');
-});
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-	console.log(`🚀 Сервер запущен на порту ${PORT}`);
+	console.log(`Сервер запущен на порту ${PORT}`);
 });

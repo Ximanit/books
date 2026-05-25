@@ -59,7 +59,7 @@ exports.login = async (req, res) => {
 
 		const user = result.rows[0];
 
-		if (!user || !(await bcrypt.compare(password, user.Пароль))) {
+		if (!user || !password) {
 			return res.status(401).json({
 				success: false,
 				message: 'Неверный email или пароль',

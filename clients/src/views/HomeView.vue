@@ -16,34 +16,25 @@
 
 <script setup>
 	import ReviewCard from '@/components/ReviewCard.vue';
+	import { ref, onMounted } from 'vue';
+	import axios from 'axios';
 
-	const reviews = [
-		{
-			id: 1,
-			author: 'Александра К.',
-			date: '2026-03-15',
-			title: '451 градус по Фаренгейту',
-			text: 'После второго прочтения поняла, насколько актуальна книга сейчас...',
-			cover: 'images.jfif',
-			rating: 5,
-		},
-		{
-			id: 2,
-			author: 'Александра К.',
-			date: '2026-03-15',
-			title: '451 градус по Фаренгейту',
-			text: 'После второго прочтения поняла, насколько актуальна книга сейчас...',
-			cover: 'images.jfif',
-			rating: 5,
-		},
-		{
-			id: 3,
-			author: 'Александра К.',
-			date: '2026-03-15',
-			title: '451 градус по Фаренгейту',
-			text: 'После второго прочтения поняла, насколько актуальна книга сейчас...',
-			cover: 'images.jfif',
-			rating: 5,
-		},
-	];
+	const reviews = ref([]);
+
+	onMounted(async () => {
+		try {
+			const res = await axios.get('/reviews');
+			reviews.value = res.data.data.map((r) => ({
+				id: r.idОтзыв_книги,
+				author: r.user_name || 'Пользователь',
+				date: r.Дата_создания,
+				title: r.book_title || 'Книга',
+				text: r.Отзыв,
+				cover: '/images.jfif', // временно
+				rating: r.Оценка,
+			}));
+		} catch (err) {
+			console.error(err);
+		}
+	});
 </script>

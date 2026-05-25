@@ -53,17 +53,28 @@
 <script setup>
 	import { ref } from 'vue';
 	import { useRouter } from 'vue-router';
+	import { useAuthStore } from '@/stores/auth';
 
 	const router = useRouter();
+	const auth = useAuthStore();
 
-	const form = ref({
-		name: '',
-		email: '',
-		password: '',
-	});
+	const form = ref({ name: '', email: '', password: '' });
+	const loading = ref(false);
 
-	const register = () => {
-		alert('Регистрация прошла успешно!');
-		router.push('/login');
+	const register = async () => {
+		loading.value = true;
+		try {
+			await auth.register(
+				form.value.name,
+				form.value.email,
+				form.value.password,
+			);
+			alert('Регистрация успешна! Теперь войдите.');
+			router.push('/login');
+		} catch (err) {
+			alert(err.response?.data?.message || 'Ошибка регистрации');
+		} finally {
+			loading.value = false;
+		}
 	};
 </script>

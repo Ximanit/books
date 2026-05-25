@@ -47,19 +47,25 @@
 </template>
 
 <script setup>
-	import RatingStars from '@/components/RatingStars.vue';
 	import { ref } from 'vue';
+	import { useRouter } from 'vue-router';
+	import axios from 'axios';
 
-	const form = ref({
-		title: '',
-		text: '',
-	});
+	const router = useRouter();
+	const form = ref({ bookId: '', rating: 5, text: '' });
 
-	const submitReview = () => {
-		alert(
-			'Отзыв успешно опубликован! (в реальном проекте здесь будет API-запрос)',
-		);
-		// Можно добавить router.push('/') после публикации
+	const submitReview = async () => {
+		try {
+			await axios.post('/reviews', {
+				bookId: form.value.bookId || 1, // временно
+				rating: form.value.rating,
+				text: form.value.text,
+			});
+			alert('Отзыв опубликован!');
+			router.push('/');
+		} catch (err) {
+			alert('Ошибка при публикации');
+		}
 	};
 </script>
 

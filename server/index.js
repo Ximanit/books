@@ -10,7 +10,7 @@ const app = express();
 // Middleware
 app.use(
 	cors({
-		origin: 'https://books-pkfal2ucn-ximanits-projects.vercel.app/',
+		origin: 'https://books-one-roan.vercel.app/',
 		credentials: true,
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],

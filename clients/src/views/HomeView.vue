@@ -30,7 +30,7 @@
 				date: r.Дата_создания,
 				title: r.book_title || 'Книга',
 				text: r.Отзыв,
-				cover: '/images.jfif', // временно
+				cover: r.Обложка || '/images.jpg',
 				rating: r.Оценка,
 			}));
 		} catch (err) {

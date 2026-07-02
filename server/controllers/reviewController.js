@@ -58,7 +58,7 @@ exports.createReview = async (req, res) => {
 exports.getReviews = async (req, res) => {
 	try {
 		const result = await pool.query(`
-            SELECT o.*, p.ФИО as user_name, k.Название as book_title, k.Автор
+            SELECT o.*, p.ФИО as user_name, k.Название as book_title, k.Автор, k.Обложка
             FROM Отзыв_книги o
             JOIN Пользователь p ON o.Пользователь_idПользователь = p.idПользователь
             JOIN Книга k ON o.Книга_idКнига = k.idКнига

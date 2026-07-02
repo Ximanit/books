@@ -9,7 +9,7 @@
 		</div>
 
 		<div style="display: flex; justify-content: center">
-			<img :src="cover || '/images.jfif'" alt="Обложка" class="book-cover" />
+			<img :src="getCoverImage()" alt="Обложка книги" class="book-cover" />
 		</div>
 
 		<div class="review-content">
@@ -31,7 +31,7 @@
 		date: String,
 		title: String,
 		text: String,
-		cover: String,
+		cover: String, // может быть null, undefined или пустой строкой
 		rating: { type: Number, default: 0 },
 	});
 
@@ -48,4 +48,12 @@
 			return 'Дата неизвестна';
 		}
 	});
+
+	// Логика для обложки
+	const getCoverImage = () => {
+		if (props.cover && props.cover.trim() !== '') {
+			return props.cover;
+		}
+		return '/images.jpg'; // твой текущий placeholder
+	};
 </script>

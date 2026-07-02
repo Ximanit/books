@@ -6,39 +6,39 @@
 			<form @submit.prevent="submitReview">
 				<div class="input-group">
 					<label for="title">Название книги</label>
-					<input
-						id="title"
-						v-model="form.title"
-						type="text"
-						placeholder="Например: 1984"
-						required />
+					<input id="title" v-model="form.title" type="text" required />
+				</div>
+
+				<div class="input-group">
+					<label for="author">Автор книги</label>
+					<input id="author" v-model="form.author" type="text" required />
 				</div>
 
 				<div class="input-group">
 					<label>Ваша оценка</label>
-					<RatingStars />
+					<StarRating v-model="form.rating" />
 				</div>
 
 				<div class="input-group">
-					<label>Обложка книги</label>
-					<div class="upload-area">
-						Перетащите изображение или нажмите, чтобы выбрать
-					</div>
+					<label for="cover">Обложка книги (URL)</label>
+					<input
+						id="cover"
+						v-model="form.cover"
+						type="url"
+						placeholder="https://example.com/cover.jpg" />
 				</div>
 
 				<div class="input-group">
-					<label for="review">Ваши мысли</label>
+					<label for="review">Ваш отзыв</label>
 					<textarea
 						id="review"
 						v-model="form.text"
-						placeholder="Что вы почувствовали? Какие мысли остались после прочтения?"
-						rows="6"></textarea>
+						placeholder="Что вы почувствовали после прочтения?"
+						rows="6"
+						required></textarea>
 				</div>
 
-				<button
-					type="submit"
-					class="btn"
-					style="width: 100%; padding: 1.1rem; font-size: 1.1rem">
+				<button type="submit" class="btn" style="width: 100%; padding: 1.1rem">
 					Опубликовать отзыв
 				</button>
 			</form>
@@ -50,39 +50,33 @@
 	import { ref } from 'vue';
 	import { useRouter } from 'vue-router';
 	import axios from 'axios';
+	import StarRating from '@/components/RatingStars.vue'; // используем интерактивный компонент
 
 	const router = useRouter();
-	const form = ref({ bookId: '', rating: 5, text: '' });
+
+	const form = ref({
+		title: '',
+		author: '',
+		rating: 5,
+		text: '',
+		cover: '',
+	});
 
 	const submitReview = async () => {
 		try {
-			await axios.post('/reviews', {
-				bookId: form.value.bookId || 1, // временно
+			const res = await axios.post('/reviews', {
+				title: form.value.title,
+				author: form.value.author,
 				rating: form.value.rating,
 				text: form.value.text,
+				cover: form.value.cover || null,
 			});
-			alert('Отзыв опубликован!');
+
+			alert('Отзыв успешно опубликован!');
 			router.push('/');
 		} catch (err) {
-			alert('Ошибка при публикации');
+			console.error(err);
+			alert(err.response?.data?.message || 'Ошибка при создании отзыва');
 		}
 	};
 </script>
-
-<style scoped>
-	.upload-area {
-		border: 2px dashed var(--border);
-		border-radius: 0.8rem;
-		padding: 3rem 1rem;
-		text-align: center;
-		color: var(--text3);
-		background: #f8fafc;
-		cursor: pointer;
-		transition: all 0.2s;
-	}
-
-	.upload-area:hover {
-		border-color: var(--primary);
-		background: #f0fdf4;
-	}
-</style>

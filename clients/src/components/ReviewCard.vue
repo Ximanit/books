@@ -3,38 +3,49 @@
 		<div class="review-header">
 			<div class="avatar"></div>
 			<div class="review-meta">
-				<strong>{{ author }}</strong>
+				<strong>{{ author || 'Неизвестный пользователь' }}</strong>
 				<time :datetime="date">{{ formattedDate }}</time>
 			</div>
 		</div>
 
 		<div style="display: flex; justify-content: center">
-			<img :src="cover" alt="Обложка" class="book-cover" />
+			<img :src="cover || '/images.jfif'" alt="Обложка" class="book-cover" />
 		</div>
 
 		<div class="review-content">
-			<h3>{{ title }}</h3>
-			<RatingStars :rating="rating" />
-			<p>{{ text }}</p>
+			<h3>{{ title || 'Без названия' }}</h3>
+
+			<StarRating :model-value="rating || 0" readonly />
+
+			<p>{{ text || 'Нет текста отзыва' }}</p>
 		</div>
 	</article>
 </template>
 
 <script setup>
-	import RatingStars from './RatingStars.vue';
+	import { computed } from 'vue';
+	import StarRating from './RatingStars.vue';
 
-	defineProps({
+	const props = defineProps({
 		author: String,
 		date: String,
 		title: String,
 		text: String,
 		cover: String,
-		rating: { type: Number, default: 5 },
+		rating: { type: Number, default: 0 },
 	});
 
-	const formattedDate = new Intl.DateTimeFormat('ru-RU', {
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric',
-	}).format(new Date());
+	const formattedDate = computed(() => {
+		if (!props.date) return 'Дата неизвестна';
+
+		try {
+			return new Intl.DateTimeFormat('ru-RU', {
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric',
+			}).format(new Date(props.date));
+		} catch (e) {
+			return 'Дата неизвестна';
+		}
+	});
 </script>

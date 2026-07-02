@@ -8,9 +8,11 @@ const {
 	deleteReview,
 } = require('../controllers/reviewController');
 
+const { protect } = require('../middleware/auth');
+
 router.get('/', getReviews);
-router.get('/my', getMyReviews);
-router.post('/', createReview);
+router.get('/my', protect, getMyReviews);
+router.post('/', protect, createReview);
 router.delete('/:id', deleteReview);
 
 module.exports = router;

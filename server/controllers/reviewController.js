@@ -2,32 +2,56 @@ const pool = require('../config/db');
 
 exports.createReview = async (req, res) => {
 	try {
-		const { bookId, rating, text } = req.body;
-		const userId = req.user.id; // из middleware авторизации
+		const { title, author, rating, text, cover } = req.body;
+		const userId = req.user.id;
 
-		if (!bookId || !rating || !text) {
+		if (!title || !author || !rating || !text) {
 			return res.status(400).json({
 				success: false,
-				message: 'Поля bookId, rating и text обязательны',
+				message: 'Название книги, автор, оценка и текст обязательны',
 			});
 		}
 
-		const result = await pool.query(
+		// === 1. Создаём книгу (или находим существующую) ===
+		let bookResult = await pool.query(
+			`SELECT idКнига FROM Книга WHERE Название = $1 AND Автор = $2`,
+			[title, author],
+		);
+
+		let bookId;
+
+		if (bookResult.rows.length > 0) {
+			bookId = bookResult.rows[0].idКнига;
+		} else {
+			// Создаём новую книгу
+			const newBook = await pool.query(
+				`INSERT INTO Книга (Название, Автор, Обложка)
+         VALUES ($1, $2, $3) RETURNING idКнига`,
+				[title, author, cover],
+			);
+			bookId = newBook.rows[0].idКнига;
+		}
+
+		// === 2. Создаём отзыв ===
+		const reviewResult = await pool.query(
 			`INSERT INTO Отзыв_книги 
-             (Книга_idКнига, Пользователь_idПользователь, Дата_создания, Отзыв, Оценка)
-             VALUES ($1, $2, CURRENT_DATE, $3, $4) 
-             RETURNING *`,
+       (Книга_idКнига, Пользователь_idПользователь, Дата_создания, Отзыв, Оценка)
+       VALUES ($1, $2, CURRENT_DATE, $3, $4) 
+       RETURNING *`,
 			[bookId, userId, text.trim(), Number(rating)],
 		);
 
 		res.status(201).json({
 			success: true,
-			data: result.rows[0],
+			data: reviewResult.rows[0],
 			message: 'Отзыв успешно опубликован!',
 		});
 	} catch (error) {
 		console.error('Create review error:', error);
-		res.status(400).json({ success: false, message: error.message });
+		res.status(500).json({
+			success: false,
+			message: error.message,
+		});
 	}
 };
 

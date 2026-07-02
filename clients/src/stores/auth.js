@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://books-640q.onrender.com/';
 
 export const useAuthStore = defineStore('auth', () => {
 	const user = ref(null);

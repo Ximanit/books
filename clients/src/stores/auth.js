@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import axios from 'axios';
 
-const API_URL = 'https://books-640q.onrender.com/';
+const API_URL = 'https://books-pkfal2ucn-ximanits-projects.vercel.app/api';
 
 export const useAuthStore = defineStore('auth', () => {
 	const user = ref(null);
